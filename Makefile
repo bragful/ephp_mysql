@@ -17,7 +17,7 @@ test:
 	./rebar3 do xref, eunit, cover
 	./covertool \
 		-cover _build/test/cover/eunit.coverdata \
-		-appname ephp_json \
+		-appname ephp_mysql \
 		-output cobertura.xml
 
 shell:
@@ -25,7 +25,7 @@ shell:
 
 ephp: compile
 	./rebar3 escriptize
-	cp -f _build/default/bin/ephp_json ephp
+	cp -f _build/default/bin/ephp_mysql ephp
 	-rm -f .build_date
 
 .PHONY: doc test compile all shell
