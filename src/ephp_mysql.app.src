@@ -1,0 +1,12 @@
+{application, ephp_mysql, [
+    {description, "MySQL client library for ePHP"},
+    {vsn, git},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib,
+        ephp,
+        mysql
+    ]},
+    {env, []}
+]}.
