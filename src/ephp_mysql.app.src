@@ -6,7 +6,7 @@
         kernel,
         stdlib,
         ephp,
-        mysql
+        p1_mysql
     ]},
     {env, []}
 ]}.
