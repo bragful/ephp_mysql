@@ -15,6 +15,8 @@ compile:
 
 test:
 	./rebar3 do xref, eunit, cover, covertool generate
+	mv _build/test/covertool/ephp_mysql.covertool.xml cobertura.xml
+	-rm -f .build_date
 
 shell:
 	./rebar3 shell
