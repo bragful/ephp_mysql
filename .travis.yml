@@ -5,16 +5,26 @@ script: "make compile test"
 services:
   - mysql
 before_install:
-  - mysql -e 'CREATE DATABASE ephp_mysql;'
-install: "sudo pip install codecov"
+  - mysql -uroot -e 'CREATE DATABASE ephp_mysql;'
+  - mysql -uroot -e "SET PASSWORD = PASSWORD('root');"
+install:
+  - "sudo pip install codecov"
 after_success: "codecov"
 
 # OS
-dist: trusty
-sudo: false
+matrix:
+  include:
+    - os: linux
+      dist: trusty
 
 # Erlang
 otp_release:
+  - 21.2
+  - 21.1
+  - 21.0
+  - 20.3
+  - 20.2
+  - 20.1
   - 20.0
   - 19.3
   - 19.2
@@ -25,17 +35,8 @@ otp_release:
   - 18.2
   - 18.1
   - 18.0
-  - 17.5
-  - 17.4
-  # fails SSL (not recommended)
-  #- 17.3
-  # not available:
-  #- 17.2
-  - 17.1
-  - 17.0
 
 # Integrations
 notifications:
   slack:
     secure: R/DFvrTxdCqOtfQ9Fp9x21Dsd74nltDk98LR8Gq/hydJIR8IC6I62b8XLje74YFb0yjtXc6v3AIrZAu8WuLDn6fij+yGV0nRy4z3pZA2Sq9qN1QEZ2MYpRJWy36ZU4qf/ST3ZcUArIQr7hGslpSEJy7f6PhKajcU/5p97Ps3k2s=
-
