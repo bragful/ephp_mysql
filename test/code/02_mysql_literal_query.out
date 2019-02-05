@@ -1,0 +1,38 @@
+object(mysqli_result)#2 (5) {
+  ["current_field"]=>
+  int(0)
+  ["field_count"]=>
+  int(1)
+  ["lengths"]=>
+  array(1) {
+    [0]=>
+    int(3)
+  }
+  ["num_rows"]=>
+  int(1)
+  ["type"]=>
+  int(0)
+}
+array(1) {
+  [0]=>
+  array(1) {
+    [0]=>
+    string(3) "100"
+  }
+}
+array(1) {
+  [0]=>
+  array(1) {
+    [100]=>
+    string(3) "100"
+  }
+}
+array(1) {
+  [0]=>
+  array(2) {
+    [0]=>
+    string(3) "100"
+    [100]=>
+    string(3) "100"
+  }
+}

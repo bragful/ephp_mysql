@@ -12,15 +12,16 @@
 
     mysqli_connect/8,
     mysqli_get_host_info/3,
+    mysqli_query/5,
     mysqli_close/3,
 
-    mysqli_construct/4,
-    mysqli_destruct/4
+    mysqli_fetch_lengths/3,
+    mysqli_fetch_all/4,
+    mysqli_data_seek/4
 ]).
 
--import(ephp_class, [class_attr/2, class_attr/3]).
-
 -include_lib("ephp/include/ephp.hrl").
+-include("ephp_mysql.hrl").
 
 -spec init_func() -> ephp_func:php_function_results().
 
@@ -38,7 +39,14 @@ init_func() -> [
                                                 {integer, undefined},
                                                 {string, undefined}]}}]},
     {mysqli_get_host_info, [object]},
-    {mysqli_close, [object]}
+    {mysqli_query, [{args, {2, 3, undefined, [object,
+                                              string,
+                                              {integer, ?MYSQLI_STORE_RESULT}]}}]},
+    {mysqli_close, [object]},
+    {mysqli_fetch_lengths, [object]},
+    {mysqli_fetch_all, [{args, {1, 2, undefined, [object,
+                                                  {integer, ?MYSQLI_NUM}]}}]},
+    {mysqli_data_seek, [object, integer]}
 ].
 
 -spec init_config() -> ephp_func:php_config_results().
@@ -54,84 +62,104 @@ init_config() -> [
 
 -spec init_const() -> ephp_func:php_const_results().
 
-init_const() -> [].
+init_const() -> [
+    {<<"MYSQLI_READ_DEFAULT_GROUP">>, ?MYSQLI_READ_DEFAULT_GROUP},
+    {<<"MYSQLI_READ_DEFAULT_FILE">>, ?MYSQLI_READ_DEFAULT_FILE},
+    {<<"MYSQLI_OPT_CONNECT_TIMEOUT">>, ?MYSQLI_OPT_CONNECT_TIMEOUT},
+    {<<"MYSQLI_OPT_LOCAL_INFILE">>, ?MYSQLI_OPT_LOCAL_INFILE},
+    {<<"MYSQLI_INIT_COMMAND">>, ?MYSQLI_INIT_COMMAND},
+    {<<"MYSQLI_CLIENT_SSL">>, ?MYSQLI_CLIENT_SSL},
+    {<<"MYSQLI_CLIENT_COMPRESS">>, ?MYSQLI_CLIENT_COMPRESS},
+    {<<"MYSQLI_CLIENT_INTERACTIVE">>, ?MYSQLI_CLIENT_INTERACTIVE},
+    {<<"MYSQLI_CLIENT_IGNORE_SPACE">>, ?MYSQLI_CLIENT_IGNORE_SPACE},
+    {<<"MYSQLI_CLIENT_NO_SCHEMA">>, ?MYSQLI_CLIENT_NO_SCHEMA},
+    {<<"MYSQLI_STORE_RESULT">>, ?MYSQLI_STORE_RESULT},
+    {<<"MYSQLI_USE_RESULT">>, ?MYSQLI_USE_RESULT},
+    {<<"MYSQLI_ASSOC">>, ?MYSQLI_ASSOC},
+    {<<"MYSQLI_NUM">>, ?MYSQLI_NUM},
+    {<<"MYSQLI_BOTH">>, ?MYSQLI_BOTH},
+    {<<"MYSQLI_NOT_NULL_FLAG">>, ?MYSQLI_NOT_NULL_FLAG},
+    {<<"MYSQLI_PRI_KEY_FLAG">>, ?MYSQLI_PRI_KEY_FLAG},
+    {<<"MYSQLI_UNIQUE_KEY_FLAG">>, ?MYSQLI_UNIQUE_KEY_FLAG},
+    {<<"MYSQLI_MULTIPLE_KEY_FLAG">>, ?MYSQLI_MULTIPLE_KEY_FLAG},
+    {<<"MYSQLI_BLOB_FLAG">>, ?MYSQLI_BLOB_FLAG},
+    {<<"MYSQLI_UNSIGNED_FLAG">>, ?MYSQLI_UNSIGNED_FLAG},
+    {<<"MYSQLI_ZEROFILL_FLAG">>, ?MYSQLI_ZEROFILL_FLAG},
+    {<<"MYSQLI_AUTO_INCREMENT_FLAG">>, ?MYSQLI_AUTO_INCREMENT_FLAG},
+    {<<"MYSQLI_TIMESTAMP_FLAG">>, ?MYSQLI_TIMESTAMP_FLAG},
+    {<<"MYSQLI_SET_FLAG">>, ?MYSQLI_SET_FLAG},
+    {<<"MYSQLI_NUM_FLAG">>, ?MYSQLI_NUM_FLAG},
+    {<<"MYSQLI_PART_KEY_FLAG">>, ?MYSQLI_PART_KEY_FLAG},
+    {<<"MYSQLI_GROUP_FLAG">>, ?MYSQLI_GROUP_FLAG},
+    {<<"MYSQLI_TYPE_DECIMAL">>, ?MYSQLI_TYPE_DECIMAL},
+    {<<"MYSQLI_TYPE_NEWDECIMAL">>, ?MYSQLI_TYPE_NEWDECIMAL},
+    {<<"MYSQLI_TYPE_BIT">>, ?MYSQLI_TYPE_BIT},
+    {<<"MYSQLI_TYPE_TINY">>, ?MYSQLI_TYPE_TINY},
+    {<<"MYSQLI_TYPE_SHORT">>, ?MYSQLI_TYPE_SHORT},
+    {<<"MYSQLI_TYPE_LONG">>, ?MYSQLI_TYPE_LONG},
+    {<<"MYSQLI_TYPE_FLOAT">>, ?MYSQLI_TYPE_FLOAT},
+    {<<"MYSQLI_TYPE_DOUBLE">>, ?MYSQLI_TYPE_DOUBLE},
+    {<<"MYSQLI_TYPE_NULL">>, ?MYSQLI_TYPE_NULL},
+    {<<"MYSQLI_TYPE_TIMESTAMP">>, ?MYSQLI_TYPE_TIMESTAMP},
+    {<<"MYSQLI_TYPE_LONGLONG">>, ?MYSQLI_TYPE_LONGLONG},
+    {<<"MYSQLI_TYPE_INT24">>, ?MYSQLI_TYPE_INT24},
+    {<<"MYSQLI_TYPE_DATE">>, ?MYSQLI_TYPE_DATE},
+    {<<"MYSQLI_TYPE_TIME">>, ?MYSQLI_TYPE_TIME},
+    {<<"MYSQLI_TYPE_DATETIME">>, ?MYSQLI_TYPE_DATETIME},
+    {<<"MYSQLI_TYPE_YEAR">>, ?MYSQLI_TYPE_YEAR},
+    {<<"MYSQLI_TYPE_NEWDATE">>, ?MYSQLI_TYPE_NEWDATE},
+    {<<"MYSQLI_TYPE_INTERVAL">>, ?MYSQLI_TYPE_INTERVAL},
+    {<<"MYSQLI_TYPE_ENUM">>, ?MYSQLI_TYPE_ENUM},
+    {<<"MYSQLI_TYPE_SET">>, ?MYSQLI_TYPE_SET},
+    {<<"MYSQLI_TYPE_TINY_BLOB">>, ?MYSQLI_TYPE_TINY_BLOB},
+    {<<"MYSQLI_TYPE_MEDIUM_BLOB">>, ?MYSQLI_TYPE_MEDIUM_BLOB},
+    {<<"MYSQLI_TYPE_LONG_BLOB">>, ?MYSQLI_TYPE_LONG_BLOB},
+    {<<"MYSQLI_TYPE_BLOB">>, ?MYSQLI_TYPE_BLOB},
+    {<<"MYSQLI_TYPE_VAR_STRING">>, ?MYSQLI_TYPE_VAR_STRING},
+    {<<"MYSQLI_TYPE_STRING">>, ?MYSQLI_TYPE_STRING},
+    {<<"MYSQLI_TYPE_CHAR">>, ?MYSQLI_TYPE_CHAR},
+    {<<"MYSQLI_TYPE_GEOMETRY">>, ?MYSQLI_TYPE_GEOMETRY},
+    {<<"MYSQLI_NO_DATA">>, ?MYSQLI_NO_DATA},
+    {<<"MYSQLI_DATA_TRUNCATED">>, ?MYSQLI_DATA_TRUNCATED},
+    {<<"MYSQLI_ENUM_FLAG">>, ?MYSQLI_ENUM_FLAG},
+    {<<"MYSQLI_BINARY_FLAG">>, ?MYSQLI_BINARY_FLAG},
+    {<<"MYSQLI_CURSOR_TYPE_FOR_UPDATE">>, ?MYSQLI_CURSOR_TYPE_FOR_UPDATE},
+    {<<"MYSQLI_CURSOR_TYPE_NO_CURSOR">>, ?MYSQLI_CURSOR_TYPE_NO_CURSOR},
+    {<<"MYSQLI_CURSOR_TYPE_READ_ONLY">>, ?MYSQLI_CURSOR_TYPE_READ_ONLY},
+    {<<"MYSQLI_CURSOR_TYPE_SCROLLABLE">>, ?MYSQLI_CURSOR_TYPE_SCROLLABLE},
+    {<<"MYSQLI_STMT_ATTR_CURSOR_TYPE">>, ?MYSQLI_STMT_ATTR_CURSOR_TYPE},
+    {<<"MYSQLI_STMT_ATTR_PREFETCH_ROWS">>, ?MYSQLI_STMT_ATTR_PREFETCH_ROWS},
+    {<<"MYSQLI_STMT_ATTR_UPDATE_MAX_LENGTH">>, ?MYSQLI_STMT_ATTR_UPDATE_MAX_LENGTH},
+    {<<"MYSQLI_SET_CHARSET_NAME">>, ?MYSQLI_SET_CHARSET_NAME},
+    {<<"MYSQLI_REPORT_INDEX">>, ?MYSQLI_REPORT_INDEX},
+    {<<"MYSQLI_REPORT_ERROR">>, ?MYSQLI_REPORT_ERROR},
+    {<<"MYSQLI_REPORT_STRICT">>, ?MYSQLI_REPORT_STRICT},
+    {<<"MYSQLI_REPORT_ALL">>, ?MYSQLI_REPORT_ALL},
+    {<<"MYSQLI_REPORT_OFF">>, ?MYSQLI_REPORT_OFF},
+    {<<"MYSQLI_DEBUG_TRACE_ENABLED">>, ?MYSQLI_DEBUG_TRACE_ENABLED},
+    {<<"MYSQLI_SERVER_QUERY_NO_GOOD_INDEX_USED">>, ?MYSQLI_SERVER_QUERY_NO_GOOD_INDEX_USED},
+    {<<"MYSQLI_SERVER_QUERY_NO_INDEX_USED">>, ?MYSQLI_SERVER_QUERY_NO_INDEX_USED},
+    {<<"MYSQLI_REFRESH_GRANT">>, ?MYSQLI_REFRESH_GRANT},
+    {<<"MYSQLI_REFRESH_LOG">>, ?MYSQLI_REFRESH_LOG},
+    {<<"MYSQLI_REFRESH_TABLES">>, ?MYSQLI_REFRESH_TABLES},
+    {<<"MYSQLI_REFRESH_HOSTS">>, ?MYSQLI_REFRESH_HOSTS},
+    {<<"MYSQLI_REFRESH_STATUS">>, ?MYSQLI_REFRESH_STATUS},
+    {<<"MYSQLI_REFRESH_THREADS">>, ?MYSQLI_REFRESH_THREADS},
+    {<<"MYSQLI_REFRESH_SLAVE">>, ?MYSQLI_REFRESH_SLAVE},
+    {<<"MYSQLI_REFRESH_MASTER">>, ?MYSQLI_REFRESH_MASTER},
+    {<<"MYSQLI_TRANS_COR_AND_CHAIN">>, ?MYSQLI_TRANS_COR_AND_CHAIN},
+    {<<"MYSQLI_TRANS_COR_AND_NO_CHAIN">>, ?MYSQLI_TRANS_COR_AND_NO_CHAIN},
+    {<<"MYSQLI_TRANS_COR_RELEASE">>, ?MYSQLI_TRANS_COR_RELEASE},
+    {<<"MYSQLI_TRANS_COR_NO_RELEASE">>, ?MYSQLI_TRANS_COR_NO_RELEASE},
+    {<<"MYSQLI_TRANS_START_READ_ONLY">>, ?MYSQLI_TRANS_START_READ_ONLY},
+    {<<"MYSQLI_TRANS_START_READ_WRITE">>, ?MYSQLI_TRANS_START_READ_WRITE}
+].
 
 -spec get_classes() -> [class()].
 
-get_classes() -> [
-    #class{
-        name = <<"mysqli">>,
-        attrs = [
-            class_attr(<<"affected_rows">>, public),
-            class_attr(<<"connect_errno">>, public),
-            class_attr(<<"connect_error">>, public),
-            class_attr(<<"errno">>, public),
-            class_attr(<<"error">>, public),
-            class_attr(<<"error_list">>, public, ephp_array:new()),
-            class_attr(<<"field_count">>, public),
-            class_attr(<<"host_info">>, public),
-            class_attr(<<"protocol_version">>, public),
-            class_attr(<<"server_info">>, public),
-            class_attr(<<"server_version">>, public),
-            class_attr(<<"info">>, public),
-            class_attr(<<"insert_id">>, public),
-            class_attr(<<"sqlstate">>, public),
-            class_attr(<<"thread_id">>, public),
-            class_attr(<<"warning_count">>, public),
-            class_attr(<<"conn_id">>, private)
-        ],
-        methods = [
-            #class_method{
-                name = <<"__construct">>,
-                code_type = builtin,
-                args = [
-                    #variable{name = <<"host">>},
-                    #variable{name = <<"user">>},
-                    #variable{name = <<"pass">>},
-                    #variable{name = <<"db">>},
-                    #variable{name = <<"port">>},
-                    #variable{name = <<"socket">>}
-                ],
-                builtin = {?MODULE, mysqli_construct},
-                pack_args = true
-            },
-            #class_method{
-                name = <<"__destruct">>,
-                code_type = builtin,
-                args = [],
-                builtin = {?MODULE, mysqli_destruct},
-                pack_args = true
-            }
-        ]
-    }
-].
-
-mysqli_construct(_Context, ObjRef, _Line,
-                [{_, Host0}, {_, User0}, {_, Pass0}, {_, DB0},
-                 {_, Port0}, {_, Socket0}]) ->
-    Host = vget_str(Host0, <<"mysqli.default_host">>),
-    User = vget_str(User0, <<"mysqli.default_user">>),
-    Pass = vget_pass(Pass0, <<"mysqli.default_pw">>),
-    Port = vget_int(Port0, <<"mysqli.default_port">>),
-    _Socket = vget_str(Socket0, <<"mysqli.default_socket">>),
-    DB = binary_to_list(DB0),
-    LogFun = fun(_Level, _Format, _Args) -> ok end,
-    case p1_mysql_conn:start_link(Host, Port, User, Pass, DB, LogFun) of
-        {ok, PID} ->
-            HostInfo = <<(list_to_binary(Host))/binary, " via TCP/IP">>,
-            ClassCtx = ephp_object:get_context(ObjRef),
-            ephp_context:set(ClassCtx, #variable{name = <<"conn_id">>}, PID),
-            ephp_context:set(ClassCtx, #variable{name = <<"host_info">>}, HostInfo),
-            ok;
-        _ ->
-            undefined
-    end.
-
-mysqli_destruct(_Context, ObjRef, _Line, []) ->
-    ClassCtx = ephp_object:get_context(ObjRef),
-    ConnId = ephp_context:get(ClassCtx, #variable{name = <<"conn_id">>}),
-    p1_mysql_conn:stop(ConnId),
-    ok.
+get_classes() ->
+    ephp_class_mysqli:get_classes() ++
+    ephp_class_mysqli_result:get_classes().
 
 -spec mysqli_connect(context(), line(), var_value(),
                                         var_value(),
@@ -159,33 +187,49 @@ mysqli_connect(Context, Line, {_, Host}, {_, User}, {_, Pass}, {_, DB},
             undefined
     end.
 
-vget_pass(undefined, Key) ->
-    case ephp_config:get(Key) of
-        <<>> -> "";
-        Value -> binary_to_list(ephp_data:to_bin(Value))
-    end;
-vget_pass(<<>>, _Key) -> "";
-vget_pass(Value, _Key) -> binary_to_list(ephp_data:to_bin(Value)).
-
-vget_int(undefined, Key) -> ephp_data:to_int(ephp_config:get(Key));
-vget_int(Value, _Key) -> Value.
-
-vget_str(undefined, Key) -> binary_to_list(ephp_config:get(Key));
-vget_str(Value, _Key) -> binary_to_list(Value).
-
-% gen_id(Host, User, Pass, Port, Socket) ->
-%     String = <<Host/binary, User/binary, Pass/binary, Port:16, Socket/binary>>,
-%     <<A:128>> = crypto:hash(md5, String),
-%     integer_to_binary(A, 16).
-
 -spec mysqli_get_host_info(context(), line(), var_value()) -> binary().
 
 mysqli_get_host_info(_Context, _Line, {_, ObjRef}) ->
     ClassCtx = ephp_object:get_context(ObjRef),
     ephp_context:get(ClassCtx, #variable{name = <<"host_info">>}).
 
+-spec mysqli_query(context(), line(), var_value(),
+                                      var_value(),
+                                      var_value()) -> mixed().
+
+mysqli_query(Context, Line, {_, ObjRef}, {_, Query}, {_, ResMode}) ->
+    Call = #call{type = object,
+                 name = <<"query">>,
+                 args = [Query, ResMode],
+                 line = Line},
+    ephp_context:call_method(Context, ObjRef, Call).
+
 -spec mysqli_close(context(), line(), var_value()) -> undefined.
 
 mysqli_close(Context, _Line, {_, Id}) ->
     ok = ephp_object:remove(Context, Id),
     undefined.
+
+-spec mysqli_fetch_lengths(context(), line(), var_value()) -> ephp_array().
+
+mysqli_fetch_lengths(_Context, _Line, {_, ObjRef}) ->
+    ObjCtx = ephp_object:get_context(ObjRef),
+    ephp_context:get(ObjCtx, #variable{name = <<"lenghts">>}).
+
+-spec mysqli_fetch_all(context(), line(), var_value(), var_value()) -> mixed().
+
+mysqli_fetch_all(Context, Line, {_, ObjRef}, {_, ResMode}) ->
+    Call = #call{type = object,
+                 name = <<"fetch_all">>,
+                 args = [ResMode],
+                 line = Line},
+    ephp_context:call_method(Context, ObjRef, Call).
+
+-spec mysqli_data_seek(context(), line(), var_value(), var_value()) -> boolean().
+
+mysqli_data_seek(Context, Line, {_, ObjRef}, {_, Offset}) ->
+    Call = #call{type = object,
+                 name = <<"data_seek">>,
+                 args = [Offset],
+                 line = Line},
+    ephp_context:call_method(Context, ObjRef, Call).
