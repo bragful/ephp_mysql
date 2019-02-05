@@ -1,3 +1,4 @@
 %% encoding: UTF-8
 {application,ephp_mysql}.
-{modules,[ephp_lib_mysql,ephp_mysql]}.
+{modules,[ephp_class_mysqli,ephp_class_mysqli_result,ephp_lib_mysqli,
+          ephp_mysql]}.
