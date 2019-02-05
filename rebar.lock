@@ -1,5 +1,5 @@
 {"1.1.0",
-[{<<"ephp">>,{pkg,<<"ephp">>,<<"0.1.0">>},0},
+[{<<"ephp">>,{pkg,<<"ephp">>,<<"0.2.0">>},0},
  {<<"ezic">>,{pkg,<<"ezic">>,<<"0.2.0">>},1},
  {<<"p1_mysql">>,{pkg,<<"p1_mysql">>,<<"1.0.8">>},0},
  {<<"recon">>,{pkg,<<"recon">>,<<"2.3.2">>},1},
@@ -7,7 +7,7 @@
  {<<"zucchini">>,{pkg,<<"zucchini">>,<<"0.1.0">>},1}]}.
 [
 {pkg_hash,[
- {<<"ephp">>, <<"A468D31B0DDD5AD8616DFEF8CC34DDD359A2B64A036B2DF027742EBB278B1451">>},
+ {<<"ephp">>, <<"67FBCFBA61D03FDA4B8536B13885C1D8FF7EC5A0CCD63EB403C1B4836A4688A3">>},
  {<<"ezic">>, <<"62C6076884580255A5BFE3CA9DCE3397EDD6B1786B49339D3F9AED2F9F7ED8CA">>},
  {<<"p1_mysql">>, <<"34ED5FE2F0E16A6EE5805C0C6C1D30FFBC4C5C9753197CDF384EE6E82C57B506">>},
  {<<"recon">>, <<"4444C879BE323B1B133EEC5241CB84BD3821EA194C740D75617E106BE4744318">>},
