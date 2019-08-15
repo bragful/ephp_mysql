@@ -12,17 +12,15 @@ install:
 after_success: "codecov"
 
 # OS
-matrix:
-  include:
-    - os: linux
-      dist: trusty
+dist: trusty
 
 # Erlang
 otp_release:
+  - 22.0
+  - 21.3
   - 21.2
   - 21.1
   - 21.0
-  - 20.3
   - 20.2
   - 20.1
   - 20.0
