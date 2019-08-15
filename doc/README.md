@@ -2,7 +2,7 @@
 
 # ePHP MySQL #
 
-Copyright (c) 2017 Altenwald Solutions, S.L.
+Copyright (c) 2017-2019 Altenwald Solutions, S.L.
 
 __Authors:__ "Manuel Rubio" ([`manuel@altenwald.com`](mailto:manuel@altenwald.com)).
 
@@ -15,11 +15,13 @@ This library implements the MySQL client library functions as is in PHP code for
 
 ### <a name="Requirements">Requirements</a> ###
 
-ePHP MySQL requires to be run over an Erlang/OTP 17+, but not all the versions are full compatible or recommended. See the list:
+ePHP MySQL requires to be run over an Erlang/OTP 18+, but not all the versions are full compatible or recommended. See the list:
 
 | Erlang Version | Support | Notes |
 |:---|:---:|:---|
-| 21.2 | :heavy_check_mark: | Recommended if you use OTP 21 |
+| 22.0 | :heavy_check_mark: | Recommended if you use OTP 22 |
+| 21.3 | :heavy_check_mark: | Recommended if you use OTP 21 |
+| 21.2 | :heavy_check_mark: | |
 | 21.1 | :heavy_check_mark: | |
 | 21.0 | :heavy_check_mark: | |
 | 20.3 | :x: | fail SSL and number conversion. |
