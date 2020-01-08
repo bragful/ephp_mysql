@@ -1,8 +1,7 @@
 -module(ephp_lib_mysqli).
 -author('manuel@altenwald.com').
--compile([warnings_as_errors]).
 
--behaviour(ephp_func).
+-behaviour(ephp_lib).
 
 -export([
     init_func/0,
@@ -23,7 +22,7 @@
 -include_lib("ephp/include/ephp.hrl").
 -include("ephp_mysql.hrl").
 
--spec init_func() -> ephp_func:php_function_results().
+-spec init_func() -> ephp_lib:php_function_results().
 
 init_func() -> [
     % mysqli_connect ([ string $host = ini_get("mysqli.default_host")
@@ -49,7 +48,7 @@ init_func() -> [
     {mysqli_data_seek, [object, integer]}
 ].
 
--spec init_config() -> ephp_func:php_config_results().
+-spec init_config() -> ephp_lib:php_config_results().
 
 init_config() -> [
     {<<"mysqli.default_host">>, <<"localhost">>},
@@ -60,7 +59,7 @@ init_config() -> [
     {<<"mysqli.default_socket">>, <<>>}
 ].
 
--spec init_const() -> ephp_func:php_const_results().
+-spec init_const() -> ephp_lib:php_const_results().
 
 init_const() -> [
     {<<"MYSQLI_READ_DEFAULT_GROUP">>, ?MYSQLI_READ_DEFAULT_GROUP},
@@ -171,7 +170,7 @@ get_classes() ->
 mysqli_connect(Context, Line, {_, Host}, {_, User}, {_, Pass}, {_, DB},
                               {_, Port}, {_, Socket}) ->
     Classes = ephp_context:get_classes(Context),
-    MySQLi = ephp_class:instance(Classes, Context, Context, <<"mysqli">>, Line),
+    MySQLi = ephp_class:instance(Classes, Context, Context, [], <<"mysqli">>, Line),
     #ephp_object{class = Class} = ephp_object:get(MySQLi),
     #class_method{name = ConstructorName} =
         ephp_class:get_constructor(Classes, Class),

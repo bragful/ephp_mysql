@@ -119,7 +119,7 @@ mysqli_query(Context, ObjRef, Line, [{_, Query}, {_, ResMode}]) ->
     {data, Res} = p1_mysql_conn:squery(ConnId, Query, self(), []),
 
     Classes = ephp_context:get_classes(Context),
-    Result = ephp_class:instance(Classes, Context, Context, <<"mysqli_result">>, Line),
+    Result = ephp_class:instance(Classes, Context, Context, [], <<"mysqli_result">>, Line),
     ResCtx = ephp_object:get_context(Result),
     Lengths = ephp_array:from_list([ L || {_, _Name, L, _Type} <- Res#p1_mysql_result.fieldinfo ]),
     FieldNames = [ fix_field_name(Name) || {_, Name, _Length, _Type} <- Res#p1_mysql_result.fieldinfo ],

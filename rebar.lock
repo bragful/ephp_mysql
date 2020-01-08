@@ -1,14 +1,18 @@
 {"1.1.0",
-[{<<"ephp">>,{pkg,<<"ephp">>,<<"0.2.6">>},0},
- {<<"ezic">>,{pkg,<<"ezic">>,<<"0.2.1">>},1},
+[{<<"ephp">>,
+  {git,"https://github.com/bragful/ephp.git",
+       {ref,"c2d05a44e4192766ca8c8ed4153483dc0ea95b2f"}},
+  0},
+ {<<"ezic">>,{pkg,<<"ezic">>,<<"0.2.2">>},1},
+ {<<"getopt">>,{pkg,<<"getopt">>,<<"1.0.1">>},1},
  {<<"p1_mysql">>,{pkg,<<"p1_mysql">>,<<"1.0.11">>},0},
  {<<"recon">>,{pkg,<<"recon">>,<<"2.3.2">>},1},
  {<<"unistring">>,{pkg,<<"unistring">>,<<"0.1.0">>},1},
  {<<"zucchini">>,{pkg,<<"zucchini">>,<<"0.1.0">>},1}]}.
 [
 {pkg_hash,[
- {<<"ephp">>, <<"5FEDD130C575BA9978A7321A001B6CA3926DB982D9D51157DD9E2C7EE22B8348">>},
- {<<"ezic">>, <<"2BABBC0DA953AF1617807B7E1E9A5A4BAFC3F924A3BB4E0104C5D5C3B1F9D1F6">>},
+ {<<"ezic">>, <<"4088190D76C2E3D2A0D02F8F2350EB5C1D19BDF38AE8BEE1F30359CF534DFE99">>},
+ {<<"getopt">>, <<"C73A9FA687B217F2FF79F68A3B637711BB1936E712B521D8CE466B29CBF7808A">>},
  {<<"p1_mysql">>, <<"AE20E1DAA2C0634BB61C1529D8401B08B855297B1C7D9AF980B2E063D8B58482">>},
  {<<"recon">>, <<"4444C879BE323B1B133EEC5241CB84BD3821EA194C740D75617E106BE4744318">>},
  {<<"unistring">>, <<"F1D07520C0A92BDF9A1D46F4A45BA424F27FA2D081F7C0ABA1F665C16A26B6C8">>},

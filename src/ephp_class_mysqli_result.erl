@@ -1,6 +1,5 @@
 -module(ephp_class_mysqli_result).
 -author('manuel@altenwald.com').
--compile([warnings_as_errors]).
 
 -export([
     get_classes/0,
@@ -47,7 +46,7 @@ get_classes() -> [
                 pack_args = true
             }
         ],
-        implements = [<<"Traversable">>]
+        implements = [{[], <<"Traversable">>}]
     }
 ].
 
